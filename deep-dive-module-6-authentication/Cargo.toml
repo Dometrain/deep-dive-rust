@@ -1,0 +1,39 @@
+[package]
+name = "todo-auth-app"
+version = "0.1.0"
+edition = "2021"
+
+[build-dependencies]
+cc = "1.0"
+
+[dependencies]
+actix-cors = "0.7"
+actix-web = "4"
+anyhow = "1.0"
+argon2 = "0.6"
+chrono = { version = "0.4", features = ["serde"] }
+config = "0.13"
+dotenv = "0.15"
+jsonwebtoken = { version = "11", features = ["rust_crypto"] }
+serde = { version = "1.0", features = ["derive"] }
+sqlx = { version = "0.7", features = ["chrono", "migrate", "runtime-tokio", "postgres"] }
+thiserror = "1.0"
+tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+tracing-log = "0.2"
+tracing-actix-web = "0.7"
+opentelemetry = "0.32.0"
+opentelemetry_sdk = "0.32.1"
+opentelemetry-otlp = { version = "0.32.0", features = ["grpc-tonic"] }
+tracing-opentelemetry = "0.33.0"
+
+[dev-dependencies]
+serde_json = "1.0"
+testcontainers-modules = { version = "0.15", features = ["postgres"] }
+# `test-util` (needed for `#[tokio::test(start_paused = true)]`'s virtual
+# clock, see `examples::module_4::spawning_async_tasks::tests`) is
+# deliberately kept out of the main `[dependencies]` entry above -- with
+# Cargo's default resolver, a dev-dependency's extra features apply only to
+# test/bench builds, not the release binary this app actually ships.
+tokio = { version = "1", features = ["test-util"] }

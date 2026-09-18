@@ -1,0 +1,7 @@
+{
+  "filesystem": {
+    "allowWrite": [
+      "/Users/jameseastham/.cargo/bin/rustup"
+    ]
+  }
+}

@@ -1,0 +1,36 @@
+[package]
+name = "todo-ws-frontend"
+version = "0.1.0"
+edition = "2021"
+
+# The browser half of Module 7: a Leptos client-side-rendered (CSR) SPA. It
+# talks to the existing `todo-ws-app` backend over its ordinary REST endpoints
+# (`/login`, `/tasks`) and subscribes to the Module 7 `/ws` broadcast feed, so
+# a task created anywhere shows up here live. Built with `trunk`, not `cargo
+# run` -- see this crate's README/`mod-7.md`.
+#
+# CSR (not SSR) on purpose: it keeps the backend exactly as the earlier
+# modules built it (a JSON + WebSocket API), needs no `cargo-leptos` build
+# coordination, and is the closest Leptos analogue to Blazor WebAssembly for
+# the .NET crowd. The SSR path (`leptos_actix`, server functions) is a
+# deliberately separate, later step -- see `mod-7.md`.
+
+[dependencies]
+leptos = { version = "0.8", features = ["csr"] }
+# Shares the exact wire types the backend serializes -- one `Task`, both ends.
+todo-shared = { path = "../shared" }
+
+gloo-net = { version = "0.6", features = ["http", "websocket"] }
+futures = "0.3"
+wasm-bindgen-futures = "0.4"
+serde_json = "1"
+# Only for the frontend's tiny `ErrorBody` type -- the failure shape
+# `{ "error": "..." }` the backend sends (e.g. `/register`'s `409`), so the
+# register form can show "Username already taken" verbatim.
+serde = { version = "1", features = ["derive"] }
+chrono = { version = "0.4", default-features = false, features = ["serde", "std"] }
+
+# Turns a Rust panic in the browser into a readable `console.error` stack
+# trace instead of the opaque "unreachable executed" WASM traps you get
+# otherwise -- installed once in `main`.
+console_error_panic_hook = "0.1"

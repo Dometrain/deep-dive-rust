@@ -1,0 +1,12 @@
+[server]
+host = "127.0.0.1"
+port = 8080
+log_level = "info"
+
+[database]
+url = "postgres://postgres:postgres@localhost:5432/todo"
+
+[jwt]
+# Local-only placeholder -- obviously wrong if it ever reached production.
+# Override with APP_JWT_SECRET in every real deployment (see README).
+secret = "dev-only-secret-change-me"

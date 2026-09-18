@@ -1,0 +1,22 @@
+# Rust build output
+target/
+
+# Local environment variables
+.env
+
+# SQLite database files and sidecars
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+logs/
+*.log
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+
+# System files
+.DS_Store

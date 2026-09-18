@@ -1,0 +1,25 @@
+[package]
+name = "todo-traits-app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+actix-web = "4"
+chrono = { version = "0.4", features = ["serde"] }
+config = "0.13"
+dotenv = "0.15"
+serde = { version = "1.0", features = ["derive"] }
+sqlx = { version = "0.7", features = ["chrono", "migrate", "runtime-tokio", "postgres"] }
+thiserror = "1.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+tracing-log = "0.2"
+tracing-actix-web = "0.7"
+opentelemetry = "0.32.0"
+opentelemetry_sdk = "0.32.1"
+opentelemetry-otlp = { version = "0.32.0", features = ["grpc-tonic"] }
+tracing-opentelemetry = "0.33.0"
+
+[dev-dependencies]
+serde_json = "1.0"
+testcontainers-modules = { version = "0.15", features = ["postgres"] }

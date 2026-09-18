@@ -1,0 +1,25 @@
+# Rust build output
+target/
+
+# Trunk build output (Leptos frontend)
+dist/
+
+# Local environment variables
+.env
+
+# SQLite database files and sidecars
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+logs/
+*.log
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+
+# System files
+.DS_Store

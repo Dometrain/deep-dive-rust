@@ -1,0 +1,20 @@
+[package]
+name = "todo-shared"
+version = "0.1.0"
+edition = "2021"
+
+# The API contract shared by the backend and the Leptos frontend. It holds
+# *only* the JSON wire types both sides exchange -- no `sqlx`, no `actix`, no
+# FFI -- so it compiles to `wasm32-unknown-unknown` for the browser as
+# happily as it does for the native server. This is what lets one definition
+# of `Task` be the single source of truth for both ends of the connection;
+# see this module's `mod-7.md` for why that's the headline win of going
+# full-stack Rust.
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+# `default-features = false` drops chrono's `clock` feature (and with it the
+# `wasmbind` machinery `Utc::now()` would need in the browser). These types
+# are only ever *deserialized* here -- neither the frontend nor this crate
+# reads the wall clock -- so `serde` + `std` is all that's needed, and the
+# WASM build stays lean.
+chrono = { version = "0.4", default-features = false, features = ["serde", "std"] }
