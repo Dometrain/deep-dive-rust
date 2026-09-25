@@ -65,7 +65,7 @@ you straight in by returning a token):
 # Create an account and get a token in one call -- 201 Created:
 curl -s -X POST http://127.0.0.1:8080/register \
   -H "Content-Type: application/json" \
-  -d '{"username":"alice","password":"password123"}'
+  -d '{"username":"james","password":"password123"}'
 # {"token":"eyJ..."}
 
 # Registering the same username again is a clean 409, not a 500:

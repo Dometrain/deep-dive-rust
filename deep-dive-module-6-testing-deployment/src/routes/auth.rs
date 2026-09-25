@@ -17,6 +17,7 @@ use tracing::instrument;
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
     cfg.route("/register", web::post().to(register));
+
     cfg.route("/login", web::post().to(login));
 }
 

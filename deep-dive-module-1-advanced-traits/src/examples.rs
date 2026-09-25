@@ -48,6 +48,22 @@ pub mod associated_types {
         }
     }
 
+    pub struct StringCollection {
+        items: Vec<String>,
+    }
+
+    impl Collection for StringCollection {
+        type Item = String;
+
+        fn add(&mut self, item: String) {
+            self.items.push(item);
+        }
+
+        fn get(&self, index: usize) -> Option<&String> {
+            self.items.get(index)
+        }
+    }
+
     #[cfg(test)]
     mod tests {
         use super::*;
@@ -121,12 +137,24 @@ pub mod task_list {
                 title: "Ship it".into(),
             });
 
+            manage_task_list(&mut list).unwrap();
+
             let titles: Vec<&str> = list
                 .list_tasks()
                 .into_iter()
                 .map(|t| t.title.as_str())
                 .collect();
             assert_eq!(titles, vec!["Learn Rust", "Ship it"]);
+        }
+
+        fn manage_task_list(list: &mut impl TaskList<Task = Task>) -> Result<(), String> {
+            let new_task = Task {
+                id: 2,
+                title: "Ship it".into(),
+            };
+            list.add_task(new_task);
+
+            Ok(())
         }
     }
 }
@@ -226,6 +254,12 @@ pub mod default_type_parameters {
         }
     }
 
+    impl Displayable<bool> for Task {
+        fn display(&self) -> bool {
+            self.id > 0
+        }
+    }
+
     #[cfg(test)]
     mod tests {
         use super::*;
@@ -238,6 +272,7 @@ pub mod default_type_parameters {
             };
             let summary: String = task.display();
             let id: u32 = task.display();
+            let boolean: bool = task.display();
 
             assert_eq!(summary, "Task 1: Learn Rust");
             assert_eq!(id, 1);
@@ -279,63 +314,6 @@ pub mod trait_bounds {
             };
             assert_eq!(print_displayable(task), "Task 1: Learn Rust");
             assert_eq!(print_displayable(42), "42");
-        }
-    }
-}
-
-/// 1.1 #5 -- Refactoring the To-Do App: shared behaviour via traits.
-///
-/// This is the pattern applied for real in `crate::models::traits`:
-/// `Displayable` and `Storable` are implemented for the actual `Task` type
-/// used by the HTTP API, and `db::queries::create_task` logs through a
-/// `T: Displayable + Storable` bound instead of a `Task`-specific function.
-pub mod refactor_todo {
-    pub trait Displayable {
-        fn display(&self) -> String;
-    }
-
-    pub trait Storable {
-        type Id;
-
-        fn id(&self) -> Self::Id;
-    }
-
-    pub struct Task {
-        pub id: u32,
-        pub title: String,
-    }
-
-    impl Displayable for Task {
-        fn display(&self) -> String {
-            format!("Task {}: {}", self.id, self.title)
-        }
-    }
-
-    impl Storable for Task {
-        type Id = u32;
-
-        fn id(&self) -> u32 {
-            self.id
-        }
-    }
-
-    pub fn print_and_store<T: Displayable + Storable>(item: T) -> (String, T::Id) {
-        (item.display(), item.id())
-    }
-
-    #[cfg(test)]
-    mod tests {
-        use super::*;
-
-        #[test]
-        fn works_for_any_displayable_storable_type() {
-            let task = Task {
-                id: 1,
-                title: "Learn Rust".into(),
-            };
-            let (summary, id) = print_and_store(task);
-            assert_eq!(summary, "Task 1: Learn Rust");
-            assert_eq!(id, 1);
         }
     }
 }

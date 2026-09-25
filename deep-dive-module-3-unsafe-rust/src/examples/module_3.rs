@@ -33,9 +33,6 @@ pub mod raw_pointer_basics {
         let raw_ptr_const: *const i32 = &x as *const i32;
         let raw_ptr_mut: *mut i32 = &mut x as *mut i32;
 
-        // SAFETY: both pointers were created from `x` on the two lines
-        // above, and `x` is still in scope -- neither pointer has outlived
-        // the value it points to.
         unsafe {
             let before = *raw_ptr_const;
             *raw_ptr_mut = new_value;

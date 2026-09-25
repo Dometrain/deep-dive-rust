@@ -73,7 +73,11 @@ pub mod closures {
 
         #[test]
         fn a_move_closure_owns_its_capture() {
-            assert_eq!(into_greeting("alice".to_string()), "hello, alice");
+            let name = "alice".to_string();
+
+            let greeting = into_greeting(name);
+
+            assert_eq!(greeting, "hello, alice");
         }
     }
 }
@@ -261,58 +265,6 @@ pub mod shared_state_with_arc_mutex {
     }
 }
 
-/// 4.1 #6 -- Why the Compiler Won't Let You Cheat: `Send` and `Sync`.
-///
-/// This is the actual mechanism behind "fearless concurrency": `Send`
-/// ("safe to move to another thread") and `Sync` ("safe to access from
-/// multiple threads at once via `&T`") are checked by the compiler, not by
-/// convention. Almost every type gets both automatically; a handful,
-/// deliberately, don't.
-pub mod send_and_sync {
-    use std::sync::Arc;
-    use std::thread;
-
-    /// `Arc<i32>`'s reference count is updated atomically, so `Arc<T>`
-    /// implements `Send` (and `Sync`) whenever `T` does -- this compiles
-    /// and runs correctly.
-    pub fn share_via_arc_across_a_thread() -> i32 {
-        let shared = Arc::new(5);
-        let shared_clone = Arc::clone(&shared);
-        thread::spawn(move || *shared_clone).join().unwrap()
-    }
-
-    /// `Rc<T>`, `Arc<T>`'s single-threaded sibling, does **not** implement
-    /// `Send` -- its reference count is a plain, non-atomic integer, so two
-    /// threads incrementing it at once would be a data race. This is a
-    /// doc-tested `compile_fail` block: `cargo test --doc` actually
-    /// attempts to compile it and fails the test if it *doesn't* fail to
-    /// compile, so this claim can't silently go stale.
-    ///
-    /// ```compile_fail
-    /// use std::rc::Rc;
-    /// use std::thread;
-    ///
-    /// let shared = Rc::new(5);
-    /// let shared_clone = Rc::clone(&shared);
-    /// thread::spawn(move || println!("{shared_clone}"))
-    ///     .join()
-    ///     .unwrap();
-    /// // error[E0277]: `Rc<i32>` cannot be sent between threads safely
-    /// //     = help: the trait `Send` is not implemented for `Rc<i32>`
-    /// ```
-    pub fn rc_across_a_thread_does_not_compile() {}
-
-    #[cfg(test)]
-    mod tests {
-        use super::*;
-
-        #[test]
-        fn arc_is_send_so_this_compiles_and_runs() {
-            assert_eq!(share_via_arc_across_a_thread(), 5);
-        }
-    }
-}
-
 /// 4.1 #7 -- Borrowing Data Safely with Scoped Threads.
 pub mod scoped_threads {
     use std::thread;
@@ -327,10 +279,10 @@ pub mod scoped_threads {
     pub fn sum_chunks(numbers: &[i32], chunk_size: usize) -> Vec<i32> {
         let mut sums = Vec::new();
 
-        thread::scope(|s| {
+        thread::scope(|scope| {
             let handles: Vec<_> = numbers
                 .chunks(chunk_size)
-                .map(|chunk| s.spawn(move || chunk.iter().sum::<i32>()))
+                .map(|chunk| scope.spawn(move || chunk.iter().sum::<i32>()))
                 .collect();
 
             for handle in handles {

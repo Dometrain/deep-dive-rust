@@ -101,7 +101,11 @@ pub mod custom_middleware {
         req: ServiceRequest,
         next: Next<impl MessageBody>,
     ) -> Result<ServiceResponse<impl MessageBody>, Error> {
+        // Before request handling
+
         let mut res = next.call(req).await?;
+
+        // After request handling
         res.headers_mut().insert(
             HeaderName::from_static("x-powered-by"),
             HeaderValue::from_static("rust-actix-lesson"),
@@ -334,8 +338,6 @@ pub mod connection_pooling {
     }
 }
 
-/// 5.2 #5 -- Error Context with `anyhow` *(moved from the retired Advanced
-/// Error Handling module)*.
 pub mod error_context_with_anyhow {
     use anyhow::{Context, Result};
 

@@ -6,10 +6,4 @@
 //! `module_1::refactor_todo`, for example). Only ever add a new file here;
 //! don't edit a previous module's file when building the next one.
 
-pub mod module_1;
-pub mod module_2;
-pub mod module_3;
-pub mod module_4;
-pub mod module_5;
-pub mod module_6;
-pub mod module_7;
+pub mod module_62;

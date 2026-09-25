@@ -84,18 +84,6 @@ async fn main() -> anyhow::Result<()> {
 
     HttpServer::new(move || {
         App::new()
-            // Module 5's middleware-order lesson
-            // (`examples::module_5::middleware_order`), applied for real.
-            // `.wrap()` calls nest like an onion: the *last* one here is
-            // the *outermost* layer, so read this bottom-up for what a
-            // request actually hits first:
-            //   1. `TracingLogger` -- sees and logs every request, even
-            //      ones the layers below short-circuit.
-            //   2. `middleware::timing` -- wraps CORS, so even a
-            //      CORS-short-circuited preflight response still gets an
-            //      `X-Response-Time-Ms` header.
-            //   3. `Cors` -- innermost of the three, closest to the actual
-            //      routes.
             .wrap(
                 Cors::default()
                     .allow_any_origin() // Development only -- see README.
